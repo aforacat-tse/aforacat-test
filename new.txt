@@ -1,0 +1,54 @@
+// playwright.config.ts
+
+import { defineConfig, devices } from '@playwright/test';
+
+const ENV_URLS = {
+  dev-gicar: 'http://dev-aforacat-keycloak.germanywestcentral.azurecontainer.io:8080/realms/gicar-ad-des/protocol/openid-connect/auth?response_type=code&client_id=gicar-client&scope=openid&redirect_uri=http%3A%2F%2Faforacat-des.germanywestcentral.cloudapp.azure.com%2Fseguretat%2Fapi%2Flogin',
+  pre-gicar: 'https://preproduccio.autenticaciogicar5.extranet.gencat.cat/realms/gicar-ad/protocol/openid-connect/auth?response_type=code&client_id=aforacat-terri-internet&scope=openid&redirect_uri=https%3A%2F%2Fpreproduccio.aforacat.territori.gencat.cat%2Fseguretat%2Fapi%2Flogin',
+  prod-gicar: 'https://www.yourwebapp.com',
+  dev-gicar: 'http://dev-aforacat-keycloak.germanywestcentral.azurecontainer.io:8080/realms/gicar-ad-des/protocol/openid-connect/auth?response_type=code&client_id=gicar-client&scope=openid&redirect_uri=http%3A%2F%2Faforacat-des.germanywestcentral.cloudapp.azure.com%2Fseguretat%2Fapi%2Flogin',
+  pre-gicar: 'https://preproduccio.autenticaciogicar5.extranet.gencat.cat/realms/gicar-ad/protocol/openid-connect/auth?response_type=code&client_id=aforacat-terri-internet&scope=openid&redirect_uri=https%3A%2F%2Fpreproduccio.aforacat.territori.gencat.cat%2Fseguretat%2Fapi%2Flogin',
+  prod-gicar: 'https://www.yourwebapp.com',  
+};
+
+export default defineConfig({
+  // ... (common settings like 'tests' directory, etc.)
+  
+  // This is the default setting used if no project is specified
+  use: {
+    // You can set a default base URL here, but it's better to use project overrides
+    baseURL: process.env.BASE_URL || 'https://default.dev.app.com',
+  },
+
+  projects: [
+    // --- DEVELOPMENT ENVIRONMENT ---
+    {
+      name: 'dev',
+      // Override default settings for the 'dev' environment
+      use: {
+        baseURL: 'https://dev.yourwebapp.com',
+        // Example: Run dev tests only on Chromium for speed
+        ...devices['Desktop Chrome'], 
+      },
+    },
+
+    // --- PRE-PRODUCTION ENVIRONMENT ---
+    {
+      name: 'pre',
+      use: {
+        baseURL: 'https://pre.yourwebapp.com',
+        // Example: Run pre-prod tests on all browsers
+      },
+    },
+
+    // --- PRODUCTION ENVIRONMENT ---
+    {
+      name: 'prod',
+      // IMPORTANT: Add an extra tag to ensure these tests are not run by accident
+      testDir: './tests/production',
+      use: {
+        baseURL: 'https://www.yourwebapp.com',
+      },
+    },
+  ],
+});
